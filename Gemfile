@@ -30,10 +30,9 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 gem 'slim-rails'
 
-
 group :test do
-  gem 'shoulda-matchers', '~> 5.0'
   gem 'rails-controller-testing'
+  gem 'shoulda-matchers', '~> 5.0'
 end
 
 group :development, :test do

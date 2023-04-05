@@ -1,5 +1,5 @@
 class AnswersController < ApplicationController
-  before_action :find_question
+  before_action :find_question, only: %i[new create]
 
   def new
     @answer = @question.answers.new

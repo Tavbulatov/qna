@@ -1,0 +1,5 @@
+tr
+  td = question.title
+  td = question.body
+  td = link_to 'Answer the question ||',  new_question_answer_path(question)
+  td = link_to 'Show question', question_path(question)

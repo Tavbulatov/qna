@@ -1,0 +1,14 @@
+
+= render 'shared/errors', resource: @question
+
+= form_with model: @question do |form|
+  p
+    = form.label :title
+    br
+    = form.text_field :title
+  p
+    = form.label :body
+    br
+    = form.text_field :body
+  p
+    = form.submit

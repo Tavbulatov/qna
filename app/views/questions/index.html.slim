@@ -2,10 +2,4 @@ h2 = 'Questions'
 
 h3 = link_to 'Create question', new_question_path
 
-table
-  tr
-    th
-      'Title
-    th
-      'Body
-      = render @questions
+= render 'question'

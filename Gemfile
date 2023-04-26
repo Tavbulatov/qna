@@ -33,6 +33,7 @@ gem 'slim-rails'
 group :test do
   gem 'rails-controller-testing'
   gem 'shoulda-matchers', '~> 5.0'
+  gem 'capybara', '~> 2.7', '>= 2.7.1'
 end
 
 group :development, :test do

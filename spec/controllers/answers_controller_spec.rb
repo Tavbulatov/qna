@@ -15,6 +15,15 @@ RSpec.describe AnswersController, type: :controller do
     end
   end
 
+  describe 'GET #show' do
+    let(:answer) {create(:answer)}
+
+    it 'assigning a variable to view the answer' do
+      get :show, params: {question_id: question, id: answer}
+      expect(assigns(:answer)).to eq(answer)
+    end
+  end
+
   describe 'POST #create' do
     context 'with valid attributes' do
       it 'saves a new answer in the database' do

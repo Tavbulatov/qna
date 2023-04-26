@@ -13,6 +13,39 @@ RSpec.describe QuestionsController, type: :controller do
     end
   end
 
+  describe 'GET #index' do
+
+    let(:questions) {create_list(:question, 3)}
+
+    before { get :index }
+
+    it 'populates an array all questions' do
+      expect(assigns(:questions)).to match_array(questions)
+    end
+
+    it 'render index view' do
+      expect(response).to render_template :index
+    end
+  end
+
+  describe 'GET #show' do
+    let(:question) { create(:question)}
+
+    before { get :show, params: { id: question }}
+
+    it 'assigning a variable to view the question' do
+      expect(assigns(:question)).to eq(question)
+    end
+
+    it 'assigns a new Answer to @answer' do
+      expect(assigns(:answer)).to be_a_new(Answer)
+    end
+
+    it 'renders show view' do
+      expect(response).to render_template :show
+    end
+  end
+
   describe 'POST #create' do
     context 'with valid attributes' do
       it 'saves a new Question in the database' do

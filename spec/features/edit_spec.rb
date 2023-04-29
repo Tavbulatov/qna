@@ -9,10 +9,7 @@ feature 'The user can change the data about himself', %q{
 
   scenario 'I completely change all the information about me' do
     visit new_user_session_path
-
-    fill_in 'Email', with: user.email
-    fill_in 'Password', with: user.password
-    click_on 'Log in'
+    sign_in(user)
 
     visit edit_user_registration_path
 

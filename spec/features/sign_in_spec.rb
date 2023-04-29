@@ -11,9 +11,7 @@ feature 'User can sign in', %q{
   background {visit new_user_session_path}
 
   scenario 'Registered user tries to sign in' do
-    fill_in 'Email',    with: user.email
-    fill_in 'Password', with: user.password
-    click_on 'Log in'
+    sign_in(user)
 
     expect(page).to have_content('Signed in successfully.')
     expect(page).to have_current_path(root_path)
@@ -28,9 +26,7 @@ feature 'User can sign in', %q{
   end
 
   scenario 'Authenticated user tries to login again' do
-    fill_in 'Email',    with: user.email
-    fill_in 'Password', with: user.password
-    click_on 'Log in'
+    sign_in(user)
     visit new_user_session_path
 
     expect(page).to have_content('You are already signed in.')

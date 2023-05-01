@@ -1,3 +1,6 @@
 tr
   td
     li = answer.body
+    li = link_to "Delete answer", question_answer_path(answer.question, answer ),
+                                 method: :delete,
+                                 data: {confirm: 'Are you sure'}

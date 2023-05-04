@@ -22,9 +22,7 @@ feature 'The author can delete his answer', '
     scenario 'attempt to delete answer by another user' do
       sign_in(other_user)
       visit question_path(question)
-      click_on 'Delete answer'
-
-      expect(page).to have_content("You cannot delete someone else's answer")
+      expect(page).to_not have_link("Delete answer")
     end
   end
 end

@@ -6,4 +6,9 @@ RSpec.describe Question, type: :model do
 
   it { should validate_presence_of(:title) }
   it { should validate_presence_of(:body) }
+
+  let(:user) { create(:user) }
+  let(:question) { create(:question, author: user) }
+
+  it { expect(question.user?(user)).to eq(true) }
 end

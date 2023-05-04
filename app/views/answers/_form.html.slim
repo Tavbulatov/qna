@@ -1,10 +1,10 @@
 
 = render 'shared/errors', resource: @answer
 
-= form_with model: [@question, @answer] do |form|
+= form_with model: [@question, answer], local: true do |form|
   p
     = form.label :body
     br
-    = form.text_field :body
+    = form.text_area :body, size: "70x10"
   p
     = form.submit

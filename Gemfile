@@ -31,11 +31,15 @@ gem 'bootsnap', '>= 1.4.4', require: false
 gem 'slim-rails'
 
 gem 'devise', '~> 4.9', '>= 4.9.2'
+gem 'jquery-rails'
 
 group :test do
   gem 'rails-controller-testing'
   gem 'shoulda-matchers', '~> 5.0'
   gem 'capybara', '~> 2.7', '>= 2.7.1'
+  gem 'selenium-webdriver'
+  # Easy installation and use of chromedriver to run system tests with Chrome
+  gem 'webdrivers'
   gem 'launchy', '~> 2.4', '>= 2.4.3'
 end
 

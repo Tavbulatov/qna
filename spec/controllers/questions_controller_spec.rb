@@ -76,6 +76,71 @@ RSpec.describe QuestionsController, type: :controller do
     end
   end
 
+  describe 'PATCH #update' do
+    before { login(user) }
+
+    let(:question) { create(:question, author: user) }
+
+    context 'with valid attributes' do
+      before { patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js }
+
+      it 'Edit title' do
+        question.reload
+        expect(question.title).to eq("Question")
+      end
+
+      it 'Edit body' do
+        question.reload
+        expect(question.body).to eq("text text")
+      end
+
+      it 'renders update view' do
+        expect(response).to render_template :update
+      end
+
+      it 'sets a flash message' do
+        expect(flash[:notice]).to eq('Your question has been successfully edited.')
+      end
+    end
+
+    context 'with invalid attributes' do
+      it 'Title attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: attributes_for(:question, :invalid)}, format: :js
+        end.to_not change(question, :title)
+      end
+
+      it 'Body attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: attributes_for(:question, :invalid)}, format: :js
+        end.to_not change(question, :body)
+      end
+
+      it 'render new view' do
+        patch :update, params: { id: question, question: attributes_for(:question, :invalid)}, format: :js
+        expect(response).to render_template :update
+      end
+    end
+
+    context "Not the author trying to edit" do
+      let(:other_user) { create(:user) }
+
+      before { login(other_user) }
+
+      it 'Title attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js
+        end.to_not change(question, :title)
+      end
+
+      it 'Body attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js
+        end.to_not change(question, :body)
+      end
+    end
+  end
+
   describe 'DELETE #destroy' do
     let!(:question) { create(:question, author: user) }
     before { login(user) }

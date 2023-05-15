@@ -1,11 +1,18 @@
+.question_show
+  .flash_message
 
-h2 =  "Question title: #{@question.title}"
-p = @question.body
+  h2 id="question-title" =  "Question title: #{@question.title}"
+  p id="question-body"  = @question.body
 
-table
-  tr
-    th
-      = render @question.answers
+  -if @question.user?(current_user)
+    = link_to "Edit", '#', class: 'edit-question-link'
+
+    .question_errors
+    = render 'form'
+  table
+    tr
+      th
+        = render @question.answers
 
 = render 'answers/form', answer: @question.answers.new
 

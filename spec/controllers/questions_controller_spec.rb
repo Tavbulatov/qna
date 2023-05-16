@@ -54,8 +54,8 @@ RSpec.describe QuestionsController, type: :controller do
         expect { post :create, params: { question: attributes_for(:question) } }.to change(Question, :count).by(1)
       end
 
-      it 'redirect to show' do
-        expect(response).to redirect_to assigns(:question)
+      it 'redirect to index' do
+        expect(response).to redirect_to questions_path
       end
 
       it 'sets a flash message' do

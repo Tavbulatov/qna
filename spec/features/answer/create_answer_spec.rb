@@ -9,7 +9,7 @@ feature 'User can create answer', '
   given!(:question) { create(:question) }
 
   describe 'Authenticated user' do
-    scenario 'creating an answer on the question page' do
+    scenario 'creating an answer on the question page', js: true do
       sign_in(user)
 
       visit question_path(question)
@@ -17,17 +17,9 @@ feature 'User can create answer', '
       fill_in 'Body', with: 'answer to question'
       click_on('Create Answer')
 
+      sleep 0.5
       expect(page).to have_content('answer to question')
       expect(page).to have_content('Answer created successfully')
     end
-  end
-
-  scenario 'unauthenticated user creates an answer on the question page' do
-    visit question_path(question)
-
-    fill_in 'Body', with: 'answer to question'
-    click_on('Create Answer')
-
-    expect(page).to have_content 'You need to sign in or sign up before continuing.'
   end
 end

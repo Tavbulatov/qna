@@ -1,20 +1,19 @@
 class AnswersController < ApplicationController
-  before_action :find_question, only: %i[new create]
-  before_action :find_answer, only: %i[show destroy]
-  before_action :authenticate_user!, except: [:show]
-
-  def new
-    @answer = @question.answers.new
-  end
+  before_action :find_answer, only: %i[destroy update]
+  before_action :authenticate_user!
 
   def create
-    @answer = @question.answers.new(answer_params)
+    @question = Question.find(params[:question_id])
+    @answer = @question.answers.create(answer_params.merge(author: current_user ))
+    if @answer.persisted?
+      flash[:notice] = 'Answer created successfully'
+    end
+  end
 
-    @answer.author = current_user
-    if @answer.save
-      redirect_to question_answer_path(@question, @answer), notice: 'Answer created successfully'
-    else
-      render :new
+  def update
+    if @answer.user?(current_user)
+      @answer.update(answer_params)
+      flash[:notice] = 'Answer edited successfully'
     end
   end
 
@@ -27,16 +26,10 @@ class AnswersController < ApplicationController
     end
   end
 
-  def show; end
-
   private
 
   def answer_params
     params.require(:answer).permit(:body)
-  end
-
-  def find_question
-    @question = Question.find(params[:question_id])
   end
 
   def find_answer

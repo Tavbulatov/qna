@@ -9,11 +9,12 @@
 
     .question_errors
     = render 'form'
-  table
-    tr
-      th
-        = render @question.answers
 
+br
+.answers
+  = render @question.answers
+
+.answer-errors
 = render 'answers/form', answer: @question.answers.new
 
 p = link_to 'Home', root_path

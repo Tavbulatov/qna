@@ -84,15 +84,15 @@ RSpec.describe AnswersController, type: :controller do
 
     context 'delete from db' do
       it 'deletes the answer' do
-        expect { delete :destroy, params: { question_id: question, id: answer } }.to change(Answer, :count).by(-1)
+        expect { delete :destroy, params: { question_id: question, id: answer }, format: :js }.to change(Answer, :count).by(-1)
       end
     end
 
     context 'removal of answer by its author' do
-      before { delete :destroy, params: { question_id: question, id: answer } }
+      before { delete :destroy, params: { question_id: question, id: answer }, format: :js }
 
-      it 'redirect to question page' do
-        expect(response).to redirect_to question_path(question)
+      it 'render destroy view' do
+        expect(response).to render_template :destroy
       end
 
       it 'sets a flash message' do
@@ -102,6 +102,11 @@ RSpec.describe AnswersController, type: :controller do
 
     context "trying to delete someone else's answer" do
       let(:other_user) { create(:user) }
+      before {login(other_user) }
+
+      it 'answer is not deleted' do
+        expect { delete :destroy, params: { question_id: question, id: answer }, format: :js }.to_not change(Answer, :count)
+      end
 
       before { delete :destroy, params: { question_id: question, id: answer }, format: :js }
 

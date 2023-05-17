@@ -15,7 +15,7 @@ feature 'The author can delete his answer', '
     scenario 'removal of answer by its author' do
       sign_in(user)
       visit question_path(question)
-      click_on 'Delete answer'
+      click_on 'Delete'
       expect(page).to have_content('Your reply has been successfully deleted')
     end
 

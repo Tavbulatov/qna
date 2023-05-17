@@ -103,11 +103,10 @@ RSpec.describe AnswersController, type: :controller do
     context "trying to delete someone else's answer" do
       let(:other_user) { create(:user) }
 
-      before { login(other_user) }
-      before { delete :destroy, params: { question_id: question, id: answer } }
+      before { delete :destroy, params: { question_id: question, id: answer }, format: :js }
 
-      it 'redirect to question page' do
-        expect(response).to redirect_to question_path(question)
+      it 'render view destroy' do
+        expect(page).to render_template :destroy
       end
 
       it 'sets a flash message' do

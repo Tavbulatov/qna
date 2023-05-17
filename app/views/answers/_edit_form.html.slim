@@ -1,0 +1,7 @@
+= form_with model: answer, local: false, class: 'hidden', id: "edit-answer-#{answer.id}" do |form|
+  p
+    = form.label :body
+    br
+    = form.text_area :body, size: "70x10"
+  p
+    = form.submit class: 'save-answer', data: { answer_id: answer.id }

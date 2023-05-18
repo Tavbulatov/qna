@@ -3,11 +3,13 @@
   = answer.body
   -if answer.user?(current_user)
     br
-      = link_to "Delete", answer_path(answer ),
+      = link_to 'Best', best_answer_path(answer),method: :patch,remote: true
+      || |
+      = link_to "Delete", answer_path(answer),
                               method: :delete,
                               remote: true,
-                              data: {confirm: 'Are you sure'}
-      |||
+                              data: {confirm: 'Are you sure?'}
+      || |
       = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
 
 

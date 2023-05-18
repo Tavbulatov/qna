@@ -32,8 +32,17 @@ RSpec.describe QuestionsController, type: :controller do
 
   describe 'GET #show' do
     let(:question) { create(:question) }
+    let!(:answers) { create_list(:answer, 3, question: question) }
+    let!(:best_answer) { create(:answer, question: question)}
 
-    before { get :show, params: { id: question } }
+    before do
+      question.update(best_answer: best_answer)
+      get :show, params: { id: question }
+    end
+
+    it 'all answers except the best answer' do
+      expect(assigns(:answers)).to_not include(best_answer)
+    end
 
     it 'assigning a variable to view the question' do
       expect(assigns(:question)).to eq(question)

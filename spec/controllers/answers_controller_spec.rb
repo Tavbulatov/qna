@@ -121,8 +121,16 @@ RSpec.describe AnswersController, type: :controller do
   end
 
   describe 'PATCH #best' do
+    let!(:answers) { create_list(:answer, 3, question: question) }
+    let!(:best_answer) { create(:answer, question: question)}
+
     before { login(user) }
     before { patch :best, params: {id: answer}, format: :js }
+
+    it 'all answers except the best answer' do
+      patch :best, params: {id: best_answer}, format: :js
+      expect(assigns(:answers)).to_not include(best_answer)
+    end
 
     it 'setting variable best_answer' do
       expect(assigns(:best_answer)).to eq(answer)

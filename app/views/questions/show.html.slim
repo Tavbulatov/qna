@@ -11,8 +11,13 @@
     = render 'form'
 
 br
+h3 Best answer:
+.best_answer
+  -if @question.best_answer.present?
+      = render 'answers/best_answer', best_answer: @question.best_answer
+br
 .answers
-  = render @question.answers
+  = render @answers
 
 .answer-errors
 = render 'answers/form', answer: @question.answers.new

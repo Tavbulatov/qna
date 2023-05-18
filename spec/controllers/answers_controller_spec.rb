@@ -111,12 +111,34 @@ RSpec.describe AnswersController, type: :controller do
       before { delete :destroy, params: { question_id: question, id: answer }, format: :js }
 
       it 'render view destroy' do
-        expect(page).to render_template :destroy
+        expect(response).to render_template :destroy
       end
 
       it 'sets a flash message' do
         expect(flash[:alert]).to eq("You cannot delete someone else's answer")
       end
+    end
+  end
+
+  describe 'PATCH #best' do
+    before { login(user) }
+    before { patch :best, params: {id: answer}, format: :js }
+
+    it 'setting variable best_answer' do
+      expect(assigns(:best_answer)).to eq(answer)
+    end
+
+    it 'assigning the best answer' do
+      question.reload
+      expect(question.best_answer).to eq(answer)
+    end
+
+    it "render view 'best'" do
+      expect(response).to render_template :best
+    end
+
+    it 'set flash message' do
+      expect(flash[:notice]).to eq('Best answer selected successfully')
     end
   end
 end

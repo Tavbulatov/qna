@@ -16,6 +16,7 @@ feature 'The author can delete his answer', '
       sign_in(user)
       visit question_path(question)
       click_on 'Delete'
+      accept_alert 'Are you sure?'
       expect(page).to have_content('Your reply has been successfully deleted')
     end
 

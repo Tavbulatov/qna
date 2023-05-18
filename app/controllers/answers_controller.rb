@@ -1,5 +1,5 @@
 class AnswersController < ApplicationController
-  before_action :find_answer, only: %i[destroy update]
+  before_action :find_answer, only: %i[destroy update best]
   before_action :authenticate_user!
 
   def create
@@ -18,14 +18,21 @@ class AnswersController < ApplicationController
   end
 
   def destroy
-
     if @answer.author == current_user
       @answer.destroy
-
       flash[:notice] = 'Your reply has been successfully deleted'
     else
       flash[:alert] = "You cannot delete someone else's answer"
     end
+  end
+
+  def best
+    question = @answer.question
+    question.update(best_answer: @answer)
+    @best_answer = question.best_answer
+    @answers = question.answers.where.not(id: @best_answer.id)
+
+    flash[:notice] = 'Best answer selected successfully'
   end
 
   private

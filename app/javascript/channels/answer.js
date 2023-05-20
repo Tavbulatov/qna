@@ -1,6 +1,3 @@
-import jquery from "jquery"
-window.$ = jquery
-
 $(document).on('turbolinks:load', function(){
   $('.answers').on('click', '.edit-answer-link', function(event) {
     event.preventDefault();

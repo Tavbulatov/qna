@@ -1,6 +1,3 @@
-import jquery from "jquery"
-window.$ = jquery
-
 $(document).on('turbolinks:load', function(){
 
   if($('.question_show').length) {

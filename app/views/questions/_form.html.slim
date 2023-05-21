@@ -11,4 +11,9 @@
     br
     = form.text_area :body, size: '70x10'
   p
+    p
+    = form.label :body
+    br
+    = form.file_field :files, multiple: true
+  p
     = form.submit class: 'save-question'

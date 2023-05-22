@@ -30,10 +30,10 @@ feature 'User can create question', "
       expect(page).to have_content "Body can't be blank"
     end
 
-    scenario 'creating a question with a file attachment' do
+    scenario 'creating a question with a files attachment' do
       fill_in 'Title', with: 'Test question'
       fill_in 'Body', with: 'text text text'
-      attach_file 'Files', with: ["#{Rails.root}/spec/rails_helper.rb", "#{Rails.root}/spec/spec_helper.rb"]
+      attach_file 'Files', ["#{Rails.root}/spec/rails_helper.rb", "#{Rails.root}/spec/spec_helper.rb"]
       click_on 'Create Question'
 
       expect(page).have_link 'rails_helper.rb'

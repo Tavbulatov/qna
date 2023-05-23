@@ -1,8 +1,12 @@
 .answer_error(data-answer-id=answer.id)
 .answer(data-answer-id=answer.id)
-  = answer.body
-  -if answer.user?(current_user)
-    br
+  br
+    li = answer.body
+
+    .files
+      = render 'shared/attachment', resource: answer
+
+    -if answer.user?(current_user)
       = link_to 'Best', best_answer_path(answer),method: :patch,remote: true
       || |
       = link_to "Delete", answer_path(answer),

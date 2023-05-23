@@ -4,4 +4,8 @@
     br
     = form.text_area :body, size: "70x10"
   p
+    = form.label :files
+    br
+    = form.file_field :files, multiple: true
+  p
     = form.submit class: 'save-answer', data: { answer_id: answer.id }

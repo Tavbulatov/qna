@@ -5,8 +5,7 @@
   p id="question-body"  = @question.body
 
   .files
-    - if @question.files.attached?
-      = render 'file'
+    = render 'shared/attachment', resource: @question
 
   -if @question.user?(current_user)
     = link_to "Edit", '#', class: 'edit-question-link'
@@ -15,7 +14,6 @@
     = render 'form'
 
 br
-h3 Best answer:
 .best_answer
   -if @question.best_answer.present?
       = render 'answers/best_answer', best_answer: @question.best_answer

@@ -3,8 +3,7 @@
   br
     li = answer.body
 
-    .files
-      = render 'shared/attachment', resource: answer
+    = render 'shared/attachment', resource: answer
 
     -if answer.user?(current_user)
       = link_to 'Best', best_answer_path(answer),method: :patch,remote: true

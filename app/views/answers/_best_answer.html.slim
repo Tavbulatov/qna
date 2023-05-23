@@ -1,7 +1,6 @@
 h3 Best answer:
 li= best_answer.body
-.files
-  = render 'shared/attachment', resource: best_answer
+= render 'shared/attachment', resource: best_answer
 
 -if best_answer.user?(current_user)
     = link_to "Delete", answer_path(best_answer),

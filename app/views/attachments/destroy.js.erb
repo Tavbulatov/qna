@@ -1,0 +1,4 @@
+<% if @attachment.destroyed? %>
+  $('.flash_message').html('<%= render 'shared/flash' %>');
+  $('.file[data-file-id="<%= @attachment.id %>"]').remove()
+<% end %>

@@ -1,5 +1,5 @@
 $('.flash_message').html('<%= render 'shared/flash' %>');
 
 <% if @answer.destroyed? %>
-  $('.answer[data-answer-id="<%= @answer.id %>"]').remove();
+  $('[data-answer-id="<%= @answer.id %>"]').remove();
 <% end %>

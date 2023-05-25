@@ -1,7 +1,11 @@
 $('.flash_message').html('<%= render 'shared/flash' %>');
 $('.answer_error[data-answer-id="<%= @answer.id %>"]').html('<%= render 'shared/errors', resource: @answer%>');
 
+
 <% if !@answer.errors.present? %>
-  $('.answer_error[data-answer-id="<%= @answer.id %>"]').remove();
-  $('.answer[data-answer-id="<%= @answer.id %>"]').replaceWith('<%= j render @answer %>');
+  <% if @answer.question.best_answer == @answer %>
+    $('.best_answer').html('<%= j render  'answers/best_answer', best_answer: @answer%>')
+  <% else %>
+    $('.answer[data-answer-id="<%= @answer.id %>"]').replaceWith('<%= j render @answer %>');
+  <% end %>
 <% end %>

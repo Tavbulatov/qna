@@ -12,4 +12,6 @@ RSpec.describe Question, type: :model do
   let(:question) { create(:question, author: user) }
 
   it { expect(question.user?(user)).to eq(true) }
+
+  it { should have_many_attached(:files) }
 end

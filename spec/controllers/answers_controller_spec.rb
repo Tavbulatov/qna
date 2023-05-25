@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe AnswersController, type: :controller do
   let(:user) { create(:user) }
   let(:question) { create(:question, author: user) }
-  let!(:answer) { create(:answer, question: question, author: user) }
+  let!(:answer) { create(:answer_with_file, question: question, author: user) }
 
   describe 'POST #create' do
     before { login(user) }
@@ -73,6 +73,17 @@ RSpec.describe AnswersController, type: :controller do
 
       it 'Title attribute has not changed' do
         expect {patch :update, params: {id: answer, answer: {body: 'answer'} }, format: :js}.to_not change(answer, :body)
+      end
+    end
+
+    context 'The author wants to change the files' do
+      let(:new_file) { fixture_file_upload(Rails.root.join('spec', 'spec_helper.rb'), 'application/ruby') }
+
+      it 'attachment list change' do
+        patch :update, params: {id: answer, answer: {files: [new_file] } }, format: :js
+        answer.reload
+
+        expect(answer.files.first.filename).to eq('spec_helper.rb')
       end
     end
   end

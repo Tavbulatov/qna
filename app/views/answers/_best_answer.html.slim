@@ -1,13 +1,13 @@
 .(data-answer-id=best_answer.id)
   h3 Best answer:
-  = best_answer.body
+  li = best_answer.body
+  = render 'shared/attachment', resource: best_answer
   -if best_answer.user?(current_user)
-    br
-      = link_to "Delete", answer_path(best_answer),
-                              method: :delete,
-                              remote: true,
-                              data: {confirm: 'Are you sure'}
-      |||
-      = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: best_answer.id }
+    = link_to "Delete", answer_path(best_answer),
+                            method: :delete,
+                            remote: true,
+                            data: {confirm: 'Are you sure'}
+    || |
+    = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: best_answer.id }
 
     = render 'answers/edit_form', answer: best_answer

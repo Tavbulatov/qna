@@ -88,7 +88,7 @@ RSpec.describe QuestionsController, type: :controller do
   describe 'PATCH #update' do
     before { login(user) }
 
-    let(:question) { create(:question, author: user) }
+    let(:question) { create(:question_with_file, author: user) }
 
     context 'with valid attributes' do
       before { patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js }
@@ -146,6 +146,17 @@ RSpec.describe QuestionsController, type: :controller do
         expect do
           patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js
         end.to_not change(question, :body)
+      end
+    end
+
+    context 'The author wants to change the files' do
+      let(:new_file) { fixture_file_upload(Rails.root.join('spec', 'spec_helper.rb'), 'application/ruby') }
+
+      it 'attachment list change' do
+        patch :update, params: {id: question, question: {files: [new_file] } }, format: :js
+        question.reload
+
+        expect(question.files.first.filename).to eq('spec_helper.rb')
       end
     end
   end

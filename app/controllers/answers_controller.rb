@@ -1,42 +1,44 @@
 class AnswersController < ApplicationController
-  before_action :find_question, only: %i[new create]
-  before_action :find_answer, only: %i[show destroy]
-  before_action :authenticate_user!, except: [:show]
-
-  def new
-    @answer = @question.answers.new
-  end
+  before_action :find_answer, only: %i[destroy update best]
+  before_action :authenticate_user!
 
   def create
-    @answer = @question.answers.new(answer_params)
+    @question = Question.find(params[:question_id])
+    @answer = @question.answers.create(answer_params.merge(author: current_user ))
+    if @answer.persisted?
+      flash[:notice] = 'Answer created successfully'
+    end
+  end
 
-    @answer.author = current_user
-    if @answer.save
-      redirect_to question_answer_path(@question, @answer), notice: 'Answer created successfully'
-    else
-      render :new
+  def update
+    if @answer.user?(current_user)
+      @answer.update(answer_params)
+      flash[:notice] = 'Answer edited successfully'
     end
   end
 
   def destroy
     if @answer.author == current_user
       @answer.destroy
-      redirect_to @answer.question, notice: 'Your reply has been successfully deleted'
+      flash[:notice] = 'Your reply has been successfully deleted'
     else
-      redirect_to @answer.question, alert: "You cannot delete someone else's answer"
+      flash[:alert] = "You cannot delete someone else's answer"
     end
   end
 
-  def show; end
+  def best
+    question = @answer.question
+    question.update(best_answer: @answer)
+    @best_answer = question.best_answer
+    @answers = question.answers.where.not(id: @best_answer.id)
+
+    flash[:notice] = 'Best answer selected successfully'
+  end
 
   private
 
   def answer_params
     params.require(:answer).permit(:body)
-  end
-
-  def find_question
-    @question = Question.find(params[:question_id])
   end
 
   def find_answer

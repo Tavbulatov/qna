@@ -1,0 +1,6 @@
+$('.flash_message').html('<%= render 'shared/flash'%>');
+
+<% if @best_answer.present?%>
+  $('.best_answer').html('<%= j render  'answers/best_answer', best_answer: @best_answer%>')
+  $('.answers').html('<%= j render  @answers%>')
+<% end%>

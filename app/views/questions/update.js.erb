@@ -1,0 +1,4 @@
+$('.flash_message').html('<%= render 'shared/flash' %>');
+$('.question_errors').html('<%= render 'shared/errors', resource: @question %>');
+$('#question-title').html('<%= j "Question title: #{@question.title}" %>');
+$('#question-body').html('<%= j @question.body %>');

@@ -1,12 +1,23 @@
+.question_show
+  .flash_message
 
-h2 =  "Question title: #{@question.title}"
-p = @question.body
+  h2 id="question-title" =  "Question title: #{@question.title}"
+  p id="question-body"  = @question.body
 
-table
-  tr
-    th
-      = render @question.answers
+  -if @question.user?(current_user)
+    = link_to "Edit", '#', class: 'edit-question-link'
 
+    .question_errors
+    = render 'form'
+br
+.answers_all
+  .best_answer
+    -if @question.best_answer.present?
+      = render 'answers/best_answer', best_answer: @question.best_answer
+  .answers
+    = render @answers
+
+.answer_errors
 = render 'answers/form', answer: @question.answers.new
 
 p = link_to 'Home', root_path

@@ -32,8 +32,17 @@ RSpec.describe QuestionsController, type: :controller do
 
   describe 'GET #show' do
     let(:question) { create(:question) }
+    let!(:answers) { create_list(:answer, 3, question: question) }
+    let!(:best_answer) { create(:answer, question: question)}
 
-    before { get :show, params: { id: question } }
+    before do
+      question.update(best_answer: best_answer)
+      get :show, params: { id: question }
+    end
+
+    it 'all answers except the best answer' do
+      expect(assigns(:answers)).to_not include(best_answer)
+    end
 
     it 'assigning a variable to view the question' do
       expect(assigns(:question)).to eq(question)
@@ -54,8 +63,8 @@ RSpec.describe QuestionsController, type: :controller do
         expect { post :create, params: { question: attributes_for(:question) } }.to change(Question, :count).by(1)
       end
 
-      it 'redirect to show' do
-        expect(response).to redirect_to assigns(:question)
+      it 'redirect to index' do
+        expect(response).to redirect_to questions_path
       end
 
       it 'sets a flash message' do
@@ -72,6 +81,71 @@ RSpec.describe QuestionsController, type: :controller do
       it 'render new view' do
         post :create, params: { question: attributes_for(:question, :invalid) }
         expect(response).to render_template :new
+      end
+    end
+  end
+
+  describe 'PATCH #update' do
+    before { login(user) }
+
+    let(:question) { create(:question, author: user) }
+
+    context 'with valid attributes' do
+      before { patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js }
+
+      it 'Edit title' do
+        question.reload
+        expect(question.title).to eq("Question")
+      end
+
+      it 'Edit body' do
+        question.reload
+        expect(question.body).to eq("text text")
+      end
+
+      it 'renders update view' do
+        expect(response).to render_template :update
+      end
+
+      it 'sets a flash message' do
+        expect(flash[:notice]).to eq('Your question has been successfully edited.')
+      end
+    end
+
+    context 'with invalid attributes' do
+      it 'Title attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: attributes_for(:question, :invalid)}, format: :js
+        end.to_not change(question, :title)
+      end
+
+      it 'Body attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: attributes_for(:question, :invalid)}, format: :js
+        end.to_not change(question, :body)
+      end
+
+      it 'render new view' do
+        patch :update, params: { id: question, question: attributes_for(:question, :invalid)}, format: :js
+        expect(response).to render_template :update
+      end
+    end
+
+    context "Not the author trying to edit" do
+      let(:other_user) { create(:user) }
+
+      before { login(other_user) }
+
+      it 'Title attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js
+        end.to_not change(question, :title)
+      end
+
+      it 'Body attribute has not changed' do
+        expect do
+          patch :update, params: { id: question, question: {title: "Question", body: "text text"} }, format: :js
+        end.to_not change(question, :body)
       end
     end
   end

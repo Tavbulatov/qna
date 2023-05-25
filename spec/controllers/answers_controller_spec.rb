@@ -3,44 +3,20 @@ require 'rails_helper'
 RSpec.describe AnswersController, type: :controller do
   let(:user) { create(:user) }
   let(:question) { create(:question, author: user) }
-
-  describe 'GET #new' do
-    before { login(user) }
-
-    before { get :new, params: { question_id: question } }
-
-    it 'assigns a new Answer to @answer' do
-      expect(assigns(:answer)).to be_a_new(Answer)
-    end
-
-    it 'renders new view' do
-      expect(response).to render_template :new
-    end
-  end
-
-  describe 'GET #show' do
-    let(:answer) { create(:answer) }
-
-    it 'assigning a variable to view the answer' do
-      get :show, params: { question_id: question, id: answer }
-      expect(assigns(:answer)).to eq(answer)
-    end
-  end
+  let!(:answer) { create(:answer, question: question, author: user) }
 
   describe 'POST #create' do
     before { login(user) }
 
     context 'with valid attributes' do
       it 'saves a new answer in the database' do
-        expect do
-          post :create, params: { question_id: question, answer: attributes_for(:answer) }
-        end.to change(Answer, :count).by(1)
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer) }, format: :js }.to change(Answer, :count).by(1)
       end
 
-      before { post :create, params: { question_id: question, answer: attributes_for(:answer) } }
+      before { post :create, params: { question_id: question, answer: attributes_for(:answer) }, format: :js  }
 
-      it 'redirect to show' do
-        expect(response).to redirect_to(question_answer_path(question, Answer.last))
+      it 'render create view' do
+        expect(response).to render_template :create
       end
 
       it 'sets a flash message' do
@@ -50,35 +26,73 @@ RSpec.describe AnswersController, type: :controller do
 
     context 'with invalid attributes' do
       it 'answer not saved' do
-        expect do
-          post :create,
-               params: { question_id: question, answer: attributes_for(:answer, :invalid) }
-        end.to_not change(Answer, :count)
+        expect { post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }, format: :js  }.to_not change(Answer, :count)
       end
 
-      it 'render new view' do
-        post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }
-        expect(response).to render_template :new
+      it 'render create view' do
+        post :create, params: { question_id: question, answer: attributes_for(:answer, :invalid) }, format: :js
+        expect(response).to render_template :create
+      end
+    end
+  end
+
+  describe 'PATCH #update' do
+    before { login(user) }
+    before { patch :update, params: {id: answer, answer: {body: 'answer'} }, format: :js }
+
+    context 'with valid attributes' do
+      it 'Edit body' do
+        answer.reload
+        expect(answer.body).to eq('answer')
+      end
+
+      it 'render update view' do
+        expect(response).to render_template :update
+      end
+
+      it 'sets a flash message' do
+        expect(flash[:notice]).to eq('Answer edited successfully')
+      end
+    end
+
+    context 'with invalid attributes' do
+      it 'answer not saved' do
+        expect { patch :update, params: {id: answer, answer: attributes_for(:answer, :invalid) },format: :js }.to_not change(answer, :body)
+      end
+
+      it 'render update view' do
+        patch :update, params: {id: answer, answer: attributes_for(:answer, :invalid) }, format: :js
+        expect(response).to render_template :update
+      end
+    end
+
+    context "Not the author trying to edit" do
+      let(:other_user) { create(:user) }
+
+      before { login(other_user) }
+
+      it 'Title attribute has not changed' do
+        expect {patch :update, params: {id: answer, answer: {body: 'answer'} }, format: :js}.to_not change(answer, :body)
       end
     end
   end
 
   describe 'DELETE #destroy' do
-    let!(:answer) { create(:answer, question: question, author: user) }
+
 
     before { login(user) }
 
     context 'delete from db' do
       it 'deletes the answer' do
-        expect { delete :destroy, params: { question_id: question, id: answer } }.to change(Answer, :count).by(-1)
+        expect { delete :destroy, params: { question_id: question, id: answer }, format: :js }.to change(Answer, :count).by(-1)
       end
     end
 
     context 'removal of answer by its author' do
-      before { delete :destroy, params: { question_id: question, id: answer } }
+      before { delete :destroy, params: { question_id: question, id: answer }, format: :js }
 
-      it 'redirect to question page' do
-        expect(response).to redirect_to question_path(question)
+      it 'render destroy view' do
+        expect(response).to render_template :destroy
       end
 
       it 'sets a flash message' do
@@ -88,17 +102,51 @@ RSpec.describe AnswersController, type: :controller do
 
     context "trying to delete someone else's answer" do
       let(:other_user) { create(:user) }
+      before {login(other_user) }
 
-      before { login(other_user) }
-      before { delete :destroy, params: { question_id: question, id: answer } }
+      it 'answer is not deleted' do
+        expect { delete :destroy, params: { question_id: question, id: answer }, format: :js }.to_not change(Answer, :count)
+      end
 
-      it 'redirect to question page' do
-        expect(response).to redirect_to question_path(question)
+      before { delete :destroy, params: { question_id: question, id: answer }, format: :js }
+
+      it 'render view destroy' do
+        expect(response).to render_template :destroy
       end
 
       it 'sets a flash message' do
         expect(flash[:alert]).to eq("You cannot delete someone else's answer")
       end
+    end
+  end
+
+  describe 'PATCH #best' do
+    let!(:answers) { create_list(:answer, 3, question: question) }
+    let!(:best_answer) { create(:answer, question: question)}
+
+    before { login(user) }
+    before { patch :best, params: {id: answer}, format: :js }
+
+    it 'all answers except the best answer' do
+      patch :best, params: {id: best_answer}, format: :js
+      expect(assigns(:answers)).to_not include(best_answer)
+    end
+
+    it 'setting variable best_answer' do
+      expect(assigns(:best_answer)).to eq(answer)
+    end
+
+    it 'assigning the best answer' do
+      question.reload
+      expect(question.best_answer).to eq(answer)
+    end
+
+    it "render view 'best'" do
+      expect(response).to render_template :best
+    end
+
+    it 'set flash message' do
+      expect(flash[:notice]).to eq('Best answer selected successfully')
     end
   end
 end

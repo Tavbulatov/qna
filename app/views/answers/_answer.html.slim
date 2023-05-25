@@ -1,7 +1,16 @@
-tr
-  td
-    li = answer.body
-    -if answer.user?(current_user)
-      li = link_to "Delete answer", question_answer_path(answer.question, answer ),
-                                 method: :delete,
-                                 data: {confirm: 'Are you sure'}
+.answer_error(data-answer-id=answer.id)
+.answer(data-answer-id=answer.id)
+  = answer.body
+  -if answer.user?(current_user)
+    br
+      = link_to 'Best', best_answer_path(answer),method: :patch,remote: true
+      || |
+      = link_to "Delete", answer_path(answer),
+                              method: :delete,
+                              remote: true,
+                              data: {confirm: 'Are you sure?'}
+      || |
+      = link_to 'Edit answer', '#', class: 'edit-answer-link', data: { answer_id: answer.id }
+
+
+      = render 'answers/edit_form', answer: answer
